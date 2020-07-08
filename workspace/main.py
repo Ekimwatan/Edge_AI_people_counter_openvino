@@ -131,8 +131,9 @@ def infer_on_stream(args, client):
     time_unseen=0
     time_entered=0
     request_id=0
-
+    frame_count=0
     ### TODO: Loop until stream is over ###
+    fps = cap.get(cv2.CAP_PROP_FPS)
    
     while cap.isOpened():
 
@@ -153,6 +154,7 @@ def infer_on_stream(args, client):
         inf_start=time.time()
         infer_network.exec_net(net_input, request_id)
         
+        frame_count +=1
 
         ### TODO: Wait for the result ###
         if infer_network.wait()==0:
@@ -182,12 +184,12 @@ def infer_on_stream(args, client):
             #get statistics
             #person has entered frame
             if num_boxes > current_count:
-                start_time=time.time()
+                start_time=frame_count/fps
                 time_entered +=1
                 #if time_entered>2:
                 previous_count=current_count
                 current_count=num_boxes
-                client.publish("person", json.dumps({"count":current_count}), qos=0, retain=False)
+                #client.publish("person", json.dumps({"count":current_count}), qos=0, retain=False)
                 #time_entered=0
             #person has left frame       
             if num_boxes < current_count:
@@ -196,10 +198,10 @@ def infer_on_stream(args, client):
                     current_count=num_boxes
                     total_count +=previous_count - current_count
                     
-                    end_time=time.time()
+                    end_time=frame_count/fps
                     duration=end_time-start_time
                     time_entered=0
-                    client.publish("person", json.dumps({"total": total_count}), qos=0, retain=False)
+                    #client.publish("person", json.dumps({"total": total_count}), qos=0, retain=False)
                     client.publish("person/duration", json.dumps({"duration":duration}), qos=0, retain=False)
                 else:
                     time_unseen +=1
