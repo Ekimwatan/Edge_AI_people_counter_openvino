@@ -11,6 +11,13 @@ The process behind converting custom layers involves adding an extension for bot
 I compared the models in terms of size before and after conversion to IR. faster_rcnn model was 55MB before conversion and became 52Mb after.
 ssd_mobilenet was 68Mb before conversion and 33 after conversion to IR.
 
+Model|Size before|Size after conversion|Accuracy
+---------|----------
+Faster_rcnn| 55Mb| 52Mb| 85%
+ssd_mobile_net| 68Mb| 33Mb| 21% 
+person-detection-retail-0002| | |90%
+
+
 
 ## Assess Model Use Cases
 
@@ -82,6 +89,10 @@ python "C:\Program Files (x86)"\IntelSWTools\openvino\deployment_tools\model_opt
 I was able to deploy the model on a rasberry pi with a Neural Compute stick 2.
 The faster_rcnn model was very slow on the pi with a FPS of 1.35 while the ssd_mobilenet had a FPS OF 10 but underperformed in terms of accuracy.
 With this in mind, I used the person-detection-retail-0002 which performed very well and detected all the people in the frame after the false negatives had been dealt with.
+
+I improved the accuracy of mobile_ssd model by inlcuding a waiting time of 3 seconds before a person is declared completely out of the frame and a 1 second delay while people enter the frame.
+This helped to counter false positives and false negatives
+
 
 
   
