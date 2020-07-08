@@ -86,7 +86,8 @@ With this in mind, I used the person-detection-retail-0002 which performed very 
 
   
   
+#Screenshots
 
-  
+![TScreenshot 1](images/screenshots/screenshot_1.jpg)
 
 
