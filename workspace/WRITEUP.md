@@ -12,7 +12,7 @@ I compared the models in terms of size before and after conversion to IR. faster
 ssd_mobilenet was 68Mb before conversion and 33 after conversion to IR.
 
 Model|Size before|Size after conversion|Accuracy
----------|----------
+---------|----------|------|------|
 Faster_rcnn| 55Mb| 52Mb| 85%
 ssd_mobile_net| 68Mb| 33Mb| 21% 
 person-detection-retail-0002| | |90%
