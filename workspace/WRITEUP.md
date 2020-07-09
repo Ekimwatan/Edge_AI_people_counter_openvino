@@ -41,49 +41,59 @@ Focal length/image size. The input from the camera needs to be resized according
 Below is the process i followed to get my model of choice
 
 - Model 1: Faster rcnn model
-  - I sourced the model from the tensorflow model zoo https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md
+ I sourced the model from the tensorflow model zoo https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md
  
  
- - I downloaded the model using the below command
- wget http://download.tensorflow.org/models/object_detection/faster_rcnn_inception_v2_coco_2018_01_28.tar.gz
+ I downloaded the model using the below command
+ `wget http://download.tensorflow.org/models/object_detection/faster_rcnn_inception_v2_coco_2018_01_28.tar.gz`
  
- -I extracted the model using the below command
- tar -xvf faster_rcnn_inception_v2_coco_2018_01_28.tar.gz
+ I extracted the model using the below command
+ `tar -xvf faster_rcnn_inception_v2_coco_2018_01_28.tar.gz`
   
-  I changed directory using
+ I changed directory using
   
-  cd faster_rcnn_inception_v2_coco_2018_01_28
+ cd faster_rcnn_inception_v2_coco_2018_01_28
   
-  -I then converted the model with the below command to IR format
+ I then converted the model with the below command to IR format
   
-  python /opt/intel/openvino/deployment_tools/model_optimizer/mo.py --input_model faster_rcnn_inception_v2_coco_2018_01_28/frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config pipeline.config --reverse_input_channels --tensorflow_use_custom_operations_config /opt/intel/openvino/deployment_tools/model_optimizer/extensions/front/tf/faster_rcnn_support.json
+  `python /opt/intel/openvino/deployment_tools/model_optimizer/mo.py --input_model faster_rcnn_inception_v2_coco_2018_01_28/frozen_inference_graph.pb --tensorflow_object_detection_api_pipeline_config pipeline.config --reverse_input_channels --tensorflow_use_custom_operations_config /opt/intel/openvino/deployment_tools/model_optimizer/extensions/front/tf/faster_rcnn_support.json`
   
-  - The model was sufficient
+  - The model was insufficient
 
 -Model 2 ssd_mobilenet
-    This is te process i followed to prepare the model
-    -I downloaded it using the below code
+ This is te process i followed to prepare the model
+ I downloaded it using the below code
     
-    wget http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v2_coco_2018_03_29.tar.gz
+  `wget http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v2_coco_2018_03_29.tar.gz`
     
--I extracted using
+I extracted the model using
+`tar -xvf ssd_mobilenet_v2_coco_2018_03_29.tar.gz`
 
 I changed directories
 
 -I then converted it to IR using
 
-python "C:\Program Files (x86)"\IntelSWTools\openvino\deployment_tools\model_optimizer\mo_tf.py --input_model frozen_inference_graph.pb --tensorflow_use_custom_operations_config "C:\Program Files (x86)"\IntelSWTools\openvino\deployment_tools\model_optimizer\extensions\front\tf\ssd_v2_support.json --tensorflow_object_detection_api_pipeline_config pipeline.config --data_type FP16 --generate_deprecated_IR_V7
+`python "C:\Program Files (x86)"\IntelSWTools\openvino\deployment_tools\model_optimizer\mo_tf.py --input_model frozen_inference_graph.pb --tensorflow_use_custom_operations_config "C:\Program Files (x86)"\IntelSWTools\openvino\deployment_tools\model_optimizer\extensions\front\tf\ssd_v2_support.json --tensorflow_object_detection_api_pipeline_config pipeline.config --data_type FP16 --generate_deprecated_IR_V7
 
 - Model was insufficient
 
--Model 3 person-detection-retail-0002
+-Model 3 ssd_inception_v2
 
--I acquired the model from the Openvino model zoo using the openvino model downloader.
+-I acquired the model from the tensorflow modelzoo using the below command
+`wget http://download.tensorflow.org/models/object_detection/ssd_inception_v2_coco_2018_01_28.tar.gz`
 -I ran the below code from the :
+
+
+
+- Model was insufficient
+
+-Model 4 person-detection-retail-00
 
 ./downloader.py person-detection-retail-0002
 
-- Model was sufficient
+This model performed very well in terms of inference speed and accuracy. I selected this as my main model.
+
+
 
 #Deployment on Raspberry pi
 I was able to deploy the model on a rasberry pi with a Neural Compute stick 2.
@@ -91,7 +101,8 @@ The faster_rcnn model was very slow on the pi with a FPS of 1.35 while the ssd_m
 With this in mind, I used the person-detection-retail-0002 which performed very well and detected all the people in the frame after the false negatives had been dealt with.
 
 I improved the accuracy of mobile_ssd model by inlcuding a waiting time of 3 seconds before a person is declared completely out of the frame and a 1 second delay while people enter the frame.
-This helped to counter false positives and false negatives
+This helped to counter false positives and false negatives.
+The person-detection-retail model also performed very well on the NCS2 and raspberry pi.
 
 
 
