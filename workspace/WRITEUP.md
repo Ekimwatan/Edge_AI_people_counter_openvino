@@ -40,7 +40,7 @@ Focal length/image size. The input from the camera needs to be resized according
 
 Below is the process i followed to get my model of choice
 
-- Model 1: Faster rcnn model
+### Model 1: Faster rcnn model
  I sourced the model from the tensorflow model zoo https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md
  
  
@@ -60,7 +60,7 @@ Below is the process i followed to get my model of choice
   
   - The model was insufficient
 
-- Model 2 ssd_mobilenet
+### Model 2 ssd_mobilenet
  This is te process i followed to prepare the model
  I downloaded it using the below code
     
@@ -77,7 +77,7 @@ I changed directories
 
 - Model was insufficient
 
-- Model 3 ssd_inception_v2
+### Model 3 ssd_inception_v2
 
 -I acquired the model from the tensorflow modelzoo using the below command
 `wget http://download.tensorflow.org/models/object_detection/ssd_inception_v2_coco_2018_01_28.tar.gz`
@@ -87,7 +87,7 @@ I changed directories
 
 - Model was insufficient
 
-- Model 4 person-detection-retail-00
+### Model 4 person-detection-retail-00
 
 ./downloader.py person-detection-retail-0002
 
