@@ -97,7 +97,7 @@ def infer_on_stream(args, client):
     ### TODO: Load the model through `infer_network` ###
 
     infer_network.load_model(model, CPU_EXTENSION, DEVICE)
-    network_shape=infer_network.get_input_shape()
+    input_shape=infer_network.get_input_shape()
     ### TODO: Handle the input stream ###
     #check for webcam
     if args.input=='CAM':
@@ -119,7 +119,7 @@ def infer_on_stream(args, client):
     w=int(cap.get(3))
     h=int(cap.get(4))
     
-    input_shape=network_shape['image_tensor']
+    
     
     
     #variables
@@ -149,10 +149,10 @@ def infer_on_stream(args, client):
         
 
         ### TODO: Start asynchronous inference for specified request ###
-        net_input={'image_tensor': p_frame, 'image_info': p_frame.shape[1:]}
+        #net_input={'image_tensor': p_frame, 'image_info': p_frame.shape[1:]}
         
         inf_start=time.time()
-        infer_network.exec_net(net_input, request_id)
+        infer_network.exec_net(p_frame)
         
         frame_count +=1
 
@@ -164,19 +164,21 @@ def infer_on_stream(args, client):
         
 
             ### TODO: Get the results of the inference request ###
-            net_output=infer_network.get_output()
+            net_output=(infer_network.get_output())
+            results=net_output[infer_network.output_blob]
             num_boxes=0
 
             ### TODO: Extract any desired stats from the results ###
             inf_time_message = "Inference time: {:.3f}ms".format(inf_time * 1000)
             cv2.putText(frame, inf_time_message, (15, 15), cv2.FONT_HERSHEY_COMPLEX, 0.5, (200, 10, 10), 1)
-            probabs=net_output[0,0,:,2]
-            for i, p in enumerate(probabs):
-                if p>prob_threshold:
+            #probabs=net_output[0,0]
+            for box in results[0][0]:
+                p=box[2]
+                if p>prob_threshold and box[1]==1:
                     
-                    box=net_output[0, 0, i, 3:]
-                    p1=(int(box[0]*w), int(box[1]*h))
-                    p2=(int(box[2]*w), int(box[3]*h))
+                    
+                    p1=(int(box[3]*w), int(box[4]*h))
+                    p2=(int(box[5]*w), int(box[6]*h))
                     cv2.rectangle(frame, p1, p2, (0, 255, 0), 3)
                     
                     num_boxes +=1
@@ -186,14 +188,17 @@ def infer_on_stream(args, client):
             if num_boxes > current_count:
                 start_time=frame_count/fps
                 time_entered +=1
-                #if time_entered>2:
-                previous_count=current_count
-                current_count=num_boxes
-                #client.publish("person", json.dumps({"count":current_count}), qos=0, retain=False)
-                #time_entered=0
+                seconds_in=time_entered/fps
+                if seconds_in>1:
+                    previous_count=current_count
+                    current_count=num_boxes
+                    #total_count +=total_count + current_count - previous_count
+                    client.publish("person", json.dumps({"total": total_count}))
+                    time_entered=0
             #person has left frame       
             if num_boxes < current_count:
-                if time_unseen>3:
+                seconds_away=time_unseen/fps
+                if seconds_away==3 :
                     previous_count=current_count
                     current_count=num_boxes
                     total_count +=previous_count - current_count
@@ -201,8 +206,10 @@ def infer_on_stream(args, client):
                     end_time=frame_count/fps
                     duration=end_time-start_time
                     time_entered=0
-                    #client.publish("person", json.dumps({"total": total_count}), qos=0, retain=False)
+                    time_unseen=0
+                    
                     client.publish("person/duration", json.dumps({"duration":duration}), qos=0, retain=False)
+                    client.publish("person", json.dumps({"count":current_count}))
                 else:
                     time_unseen +=1
                 

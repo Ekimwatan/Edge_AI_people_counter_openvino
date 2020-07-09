@@ -73,19 +73,18 @@ class Network:
 
     def get_input_shape(self):
         ### TODO: Return the shape of the input layer ###
-        input_shapes={}
-        for input in self.net.inputs:
-            input_shapes[input]=(self.net.inputs[input].shape)
-        return input_shapes
+        
+
+        return self.net.inputs[self.input_blob].shape
         
         
 
-    def exec_net(self, net_input, request_id):
+    def exec_net(self, frame):
         ### TODO: Start an asynchronous request ###
         ### TODO: Return any necessary information ###
         ### Note: You may need to update the function parameters. ###
         
-        self.infer_request_handle=self.exec_network.start_async(request_id, inputs=net_input)
+        self.exec_network.start_async(request_id=0, inputs={self.input_blob:frame})
         
         return
 
@@ -93,7 +92,7 @@ class Network:
         ### TODO: Wait for the request to be complete. ###
         ### TODO: Return any necessary information ###
         ### Note: You may need to update the function parameters. ###
-        status= self.infer_request_handle.wait(-1)
+        status= self.exec_network.requests[0].wait(-1)
         return status
 
     def get_output(self):
@@ -101,5 +100,5 @@ class Network:
         ### Note: You may need to update the function parameters. ###
         
         
-        return self.infer_request_handle.outputs[self.output_blob]
+        return self.exec_network.requests[0].outputs
     

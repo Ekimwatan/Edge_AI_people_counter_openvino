@@ -8,14 +8,14 @@ The process behind converting custom layers involves adding an extension for bot
 
 ## Comparing Model Performance
 
-I compared the models in terms of size before and after conversion to IR. faster_rcnn model was 55MB before conversion and became 52Mb after.
-ssd_mobilenet was 68Mb before conversion and 33 after conversion to IR.
+I compared the models in terms of size before and after conversion to IR.I also compare the models in terms of accuracy and inference speed.
 
-Model|Size before|Size after conversion|Accuracy
----------|----------|------|------|
-Faster_rcnn| 55Mb| 52Mb| 85%
-ssd_mobile_net| 68Mb| 33Mb| 21% 
-person-detection-retail-0002| | |90%
+Model|Size before|Size after conversion|Accuracy|Inference time before(run on pc)|Inference time after
+---------|----------|------|------|-------|--------|
+Faster_rcnn| 55Mb| 52Mb| 85%|9.4667|907ms
+ssd_mobile_net| 68Mb| 33Mb| 21% |6.493|70ms
+ssd_inception_v2|99.5Mb|95.4Mb|28%|8.044|157ms
+person-detection-retail-0002| | |90%| |47ms
 
 
 
